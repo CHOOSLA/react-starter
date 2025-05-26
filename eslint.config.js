@@ -7,6 +7,12 @@ import pluginJsxA11y from 'eslint-plugin-jsx-a11y'
 import pluginImport from 'eslint-plugin-import'
 import pluginPrettier from 'eslint-plugin-prettier'
 
+// 👉 자동 import된 전역 변수 반영
+import autoImportGlobals from './.eslintrc-auto-import.json' assert { type: 'json' }
+
+// 👉 React를 반드시 포함
+autoImportGlobals.globals.React = true
+
 export default [
   {
     ignores: ['dist', 'node_modules'],
@@ -18,6 +24,7 @@ export default [
       sourceType: 'module',
       globals: {
         ...globals.browser,
+        ...autoImportGlobals.globals,
       },
       parserOptions: {
         ecmaFeatures: {
@@ -39,10 +46,12 @@ export default [
       ...pluginReactHooks.configs.recommended.rules,
       ...pluginJsxA11y.configs.recommended.rules,
 
+      // JSX 사용 시 React 자동 인식
+      'react/react-in-jsx-scope': 'off',
+
       'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]' }],
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
-      // import 정렬 (선택)
       'import/order': [
         'warn',
         {
@@ -51,7 +60,6 @@ export default [
         },
       ],
 
-      // prettier 포맷팅 규칙 반영
       'prettier/prettier': 'warn',
     },
     settings: {
